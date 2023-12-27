@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { typescriptLanguage } from '@codemirror/lang-javascript';
 import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
@@ -7,15 +7,22 @@ import ReactCodeMirror from '@uiw/react-codemirror';
 import ResultView from './ResultView';
 
 import { codeEditorStyle, sketchNoteStyle } from './index.css';
+import { readFromClipboard } from '../../utils/clipboard';
 
 const vscodeTheme = vscodeDarkInit({
   settings: {
-    fontFamily: 'Cascadia Code',
+    fontFamily: `'Cascadia Code', ui-monospace, monospace, sans-serif`,
   },
 });
 
 export default function SketchNote() {
   const [code, setCode] = useState('');
+
+  useEffect(() => {
+    if (code.toLowerCase() === 'rrr') {
+      readFromClipboard().then((url) => (location.href = url));
+    }
+  }, [code]);
 
   return (
     <div className={sketchNoteStyle}>
@@ -26,6 +33,7 @@ export default function SketchNote() {
         placeholder="'sketchpad';"
         onChange={setCode}
         theme={vscodeTheme}
+        autoFocus={true}
         basicSetup={{
           highlightActiveLineGutter: true,
           allowMultipleSelections: true,
