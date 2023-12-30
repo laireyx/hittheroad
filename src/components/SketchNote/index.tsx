@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { typescriptLanguage } from '@codemirror/lang-javascript';
 import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
@@ -7,7 +7,6 @@ import ReactCodeMirror from '@uiw/react-codemirror';
 import ResultView from './ResultView';
 
 import { codeEditorStyle, sketchNoteStyle } from './index.css';
-import { readFromClipboard } from '../../utils/clipboard';
 
 const vscodeTheme = vscodeDarkInit({
   settings: {
@@ -18,11 +17,21 @@ const vscodeTheme = vscodeDarkInit({
 export default function SketchNote() {
   const [code, setCode] = useState('');
 
-  useEffect(() => {
-    if (code.toLowerCase() === 'rrr') {
-      readFromClipboard().then((url) => (location.href = url));
-    }
-  }, [code]);
+  const onPasteCapture = useCallback(
+    (e: React.ClipboardEvent<HTMLDivElement>) => {
+      if (code.length > 0) return;
+
+      const text = e.clipboardData.getData('text/plain');
+
+      // Try URL
+      try {
+        new URL(text);
+        console.log('location.href');
+        location.href = text;
+      } catch (_) {}
+    },
+    [code],
+  );
 
   return (
     <div className={sketchNoteStyle}>
@@ -32,6 +41,7 @@ export default function SketchNote() {
         extensions={[typescriptLanguage]}
         placeholder="'sketchpad';"
         onChange={setCode}
+        onPasteCapture={onPasteCapture}
         theme={vscodeTheme}
         autoFocus={true}
         basicSetup={{
