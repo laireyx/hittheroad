@@ -1,8 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import stringifyObject from 'stringify-object';
-
-import execute from './execute';
+import useExecutionResult from './useExecutionResult';
 
 import {
   resultCopyButtonStyle,
@@ -16,13 +14,7 @@ interface ResulteViewProps {
 }
 
 export default function ResultView({ code }: ResulteViewProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
-  const result = useMemo(() => {
-    const executionResult = execute(code);
-
-    if (executionResult instanceof Error) return executionResult.stack ?? '';
-    return stringifyObject(executionResult);
-  }, [code]);
+  const result = useExecutionResult(code);
 
   const copyResult = useCallback(() => {
     copyToClipboard(result);
