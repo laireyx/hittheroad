@@ -1,7 +1,7 @@
-import { transpile } from 'typescript';
-
 import { useEffect, useMemo, useState } from 'react';
+
 import stringifyObject from 'stringify-object';
+import { transpile } from 'typescript';
 
 export default function useExecutionResult(code: string) {
   const [result, setResult] = useState<unknown>(undefined);
@@ -15,7 +15,7 @@ export default function useExecutionResult(code: string) {
       }
 
       try {
-        setResult(eval(executeTarget));
+        setResult(() => eval(executeTarget) as unknown);
       } catch (err) {
         setResult(err);
       }
