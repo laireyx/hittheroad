@@ -14,11 +14,13 @@ export default function useExecutionResult(code: string) {
         executeTarget = transpile(code);
       }
 
-      try {
-        setResult(() => eval(executeTarget) as unknown);
-      } catch (err) {
-        setResult(err);
-      }
+      setResult(() => {
+        try {
+          return eval(executeTarget) as unknown;
+        } catch (err) {
+          return err;
+        }
+      });
     }, 200);
 
     return () => clearTimeout(executionHandle);
